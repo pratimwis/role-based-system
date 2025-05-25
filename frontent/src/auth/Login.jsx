@@ -24,11 +24,7 @@ export const Login = () => {
     e.preventDefault();
     try {
       const response = await loginUser(formData);
-      if (response.status !== 200) {
-        toast.error("Login failed");
-        return;
-      }
-      const { message, token, userData } = response.data;
+      const { message, token, userData } = response?.data;
       localStorage.setItem("token", JSON.stringify(token));
       localStorage.setItem("userData", JSON.stringify(userData))
       socket.emit("login", userData.username);
@@ -39,7 +35,8 @@ export const Login = () => {
       }
       toast.success(message);
     } catch (error) {
-      const { message } = error.response.data;
+      console.log(error)
+      const { message } = error?.response?.data ||"";
       toast.error(message);
     }
   };
@@ -60,6 +57,7 @@ export const Login = () => {
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="you@example.com"
+              required
             />
           </div>
           <div>
@@ -73,6 +71,7 @@ export const Login = () => {
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="••••••••"
+              required
             />
           </div>
           <button

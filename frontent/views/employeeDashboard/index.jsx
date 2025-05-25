@@ -9,13 +9,7 @@ const EmployeeDashboard = () => {
   const { isModalOpen, setIsModalOpen } = useEmployeeDashboard();
   const [id, setId] = useState("");
 
-  // Sort tasks by priority(filter worklist based on status then sort by priority)
-  const priorityOrder = { high: 1, medium: 2, low: 3 };
-  const pendingTasks = workList
-    .filter(task => task.status === 'pending')
-    .sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
-
-  // Filter completed tasks
+  const pendingTasks = workList.filter(task => task.status === 'pending');
   const completedTasks = workList.filter(task => task.status === 'completed');
 
   //set id before opening modal

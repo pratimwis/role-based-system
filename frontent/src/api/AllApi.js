@@ -24,21 +24,30 @@ API.interceptors.request.use(
   }
 
 );
+
 API.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      const message = error.response.data?.message;
-
+      const message = error.response.data?.message || "An error occurred";
       if (message === "Access denied") {
-        toast.error("Access Denied")
+        toast.error("Access Denied");
         localStorage.removeItem("token");
         localStorage.removeItem("userData");
         window.location.href = "/login";
       }
+     // else {
+      //   toast.error(message);
+      // }
+    } else if (error.request) {
+      toast.error("Network error");
+    } else {
+      toast.error("An unexpected error occurred");
     }
+
+    return Promise.reject(error); 
   }
-)
+);
 
 export default API;
 
@@ -68,6 +77,9 @@ export const deleteAssignedWork = (id) => {
 }
 export const getAllUsers = () => {
   return API.get('/admin/get-all-users');
+}
+export const updatePriorityOrder = (draggedWorkId,targetWorkId)=>{
+  return API.put('/admin/update-priority-order',{draggedWorkId,targetWorkId})
 }
 
 //Employee Api's

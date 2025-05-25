@@ -14,6 +14,10 @@ export const workSchema = new mongoose.Schema({
     enum: ['low', 'medium', 'high'],
     required: true
   },
+  priorityOrder:{
+    type:Number,
+    require:true,
+  },
   assignedTo: {
     type: String,
     required: true

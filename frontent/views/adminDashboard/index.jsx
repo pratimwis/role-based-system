@@ -1,31 +1,34 @@
-import { FiPlus } from 'react-icons/fi';
-import { useState } from 'react';
-import useAuthGuard from '../../src/utils/UseAuthGuard';
-import useAdminDashboard from '../../src/hooks/useAdminDashboard';
-import AssignWorkModal from '../../src/components/AssignWorkModal';
-import WorkList from '../../src/components/WorkList';
+import { FiPlus } from "react-icons/fi";
+import { useState } from "react";
+import useAuthGuard from "../../src/utils/UseAuthGuard";
+import useAdminDashboard from "../../src/hooks/useAdminDashboard";
+import AssignWorkModal from "../../src/components/AssignWorkModal";
+import WorkList from "../../src/components/WorkList";
 const AdminDashboard = () => {
   const userData = useAuthGuard();
   const [selectTab, setSelectTab] = useState("all");
-  const { workList,
+  const {
+    workList,
     empList,
     isModalOpen,
     editData,
     openModal,
     closeModal,
+    setWorkList,
     handleAssignSubmit,
     handleEditTask,
     handleDeleteTask,
-    users } = useAdminDashboard();
+    fetchWorkList,
+    users,
+  } = useAdminDashboard();
 
-  const admins = users.filter(user => user.role === 'admin');
-  const employees = users.filter(user => user.role === 'employee');
+  const admins = users.filter((user) => user.role === "admin");
+  const employees = users.filter((user) => user.role === "employee");
 
   const filteredUsers =
     selectTab === "all"
       ? users
-      : users.filter(user => user.role === selectTab);
-
+      : users.filter((user) => user.role === selectTab);
 
   return (
     <div className="py-12 px-4 flex flex-row-reverse justify-between">
@@ -42,28 +45,31 @@ const AdminDashboard = () => {
         <div className="mb-6 flex flex-wrap gap-4 justify-center">
           <button
             onClick={() => setSelectTab("all")}
-            className={`px-4 py-2 rounded-full text-sm font-semibold ${selectTab === "all"
-              ? "bg-blue-600 text-white"
-              : "bg-white text-blue-600 border border-blue-600"
-              }`}
+            className={`px-4 py-2 rounded-full text-sm font-semibold ${
+              selectTab === "all"
+                ? "bg-blue-600 text-white"
+                : "bg-white text-blue-600 border border-blue-600"
+            }`}
           >
             All Users ({users.length})
           </button>
           <button
             onClick={() => setSelectTab("employee")}
-            className={`px-4 py-2 rounded-full text-sm font-semibold ${selectTab === "employee"
-              ? "bg-green-600 text-white"
-              : "bg-white text-green-600 border border-green-600"
-              }`}
+            className={`px-4 py-2 rounded-full text-sm font-semibold ${
+              selectTab === "employee"
+                ? "bg-green-600 text-white"
+                : "bg-white text-green-600 border border-green-600"
+            }`}
           >
             Employee ({employees.length})
           </button>
           <button
             onClick={() => setSelectTab("admin")}
-            className={`px-4 py-2 rounded-full text-sm font-semibold ${selectTab === "admin"
-              ? "bg-yellow-600 text-white"
-              : "bg-white text-yellow-600 border border-yellow-600"
-              }`}
+            className={`px-4 py-2 rounded-full text-sm font-semibold ${
+              selectTab === "admin"
+                ? "bg-yellow-600 text-white"
+                : "bg-white text-yellow-600 border border-yellow-600"
+            }`}
           >
             Admin ({admins.length})
           </button>
@@ -71,14 +77,17 @@ const AdminDashboard = () => {
 
         {/* Filtered User List */}
         <div className="grid sm:grid-rows-2 md:grid-rows-3 gap-6">
-          {filteredUsers.map(user => (
+          {filteredUsers.map((user) => (
             <div
               key={user._id}
               className="bg-white p-5 rounded-xl shadow border border-gray-200"
             >
-              <p className="text-lg font-semibold text-gray-800">{user.username}</p>
+              <p className="text-lg font-semibold text-gray-800">
+                {user.username}
+              </p>
               <p className="text-sm text-gray-500 mt-1 capitalize">
-                Role: <span className="font-medium text-indigo-600">{user.role}</span>
+                Role:{" "}
+                <span className="font-medium text-indigo-600">{user.role}</span>
               </p>
             </div>
           ))}
@@ -92,7 +101,9 @@ const AdminDashboard = () => {
             <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
               Welcome, {userData.username}
             </h1>
-            <p className="text-sm text-gray-500">Manage tasks & assignments here.</p>
+            <p className="text-sm text-gray-500">
+              Manage tasks & assignments here.
+            </p>
           </div>
           <button
             onClick={openModal}
@@ -106,11 +117,15 @@ const AdminDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-blue-50 p-6 rounded-xl border border-blue-100">
             <h2 className="text-base font-semibold text-blue-700">User ID</h2>
-            <p className="text-gray-700 mt-1 break-all text-sm">{userData._id}</p>
+            <p className="text-gray-700 mt-1 break-all text-sm">
+              {userData._id}
+            </p>
           </div>
           <div className="bg-green-50 p-6 rounded-xl border border-green-100">
             <h2 className="text-base font-semibold text-green-700">Role</h2>
-            <p className="text-gray-700 mt-1 capitalize text-sm">{userData.role}</p>
+            <p className="text-gray-700 mt-1 capitalize text-sm">
+              {userData.role}
+            </p>
           </div>
         </div>
 
@@ -119,10 +134,12 @@ const AdminDashboard = () => {
           list={workList}
           handleEdit={handleEditTask}
           handleDelete={handleDeleteTask}
+          emplist={empList}
+          setWorkList={setWorkList}
+          fetchWorkList={fetchWorkList}
         />
       </div>
     </div>
-
   );
 };
 

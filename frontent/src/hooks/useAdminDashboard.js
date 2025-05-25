@@ -1,6 +1,13 @@
-import { useEffect, useState } from 'react';
-import { assignWork, deleteAssignedWork, editAssignedWork, employeeList, getAllUsers, workListApi } from '../api/AllApi';
-import { toast } from 'react-toastify';
+import { useEffect, useState } from "react";
+import {
+  assignWork,
+  deleteAssignedWork,
+  editAssignedWork,
+  employeeList,
+  getAllUsers,
+  workListApi,
+} from "../api/AllApi";
+import { toast } from "react-toastify";
 //import { socket } from '../socket';
 //import useAuthGuard from '../utils/UseAuthGuard';
 
@@ -15,6 +22,20 @@ const useAdminDashboard = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
+  const priorityArray = { high: 1, medium: 2, low: 3 };
+
+  const priorityWiseSort = workList.sort((a, b) => {
+    const priorityDiff = priorityArray[a.priority] - priorityArray[b.priority];
+
+    //this short high to low
+    if (priorityDiff !== 0) {
+      return priorityDiff;
+    }
+
+    // If priority level is same, sort by priorityOrder
+    return a.priorityOrder - b.priorityOrder;
+  });
+
   const fetchWorkList = async () => {
     try {
       const response = await workListApi();
@@ -22,17 +43,15 @@ const useAdminDashboard = () => {
         setWorkList(response.data.data);
       } else if (response.status === 404) {
         setWorkList([]);
-        toast.error("No work assigned yet.")
+        toast.error("No work assigned yet.");
+      } else {
+        toast.error("Error fetching work list.");
       }
-      else {
-        toast.error("Error fetching work list.")
-      }
-
     } catch (error) {
       const { message } = error.response?.data || {};
-      toast.error(message)
+      toast.error(message);
     }
-  }
+  };
   const fetchEmployeeList = async () => {
     try {
       const response = await employeeList();
@@ -42,17 +61,16 @@ const useAdminDashboard = () => {
         toast.error("Failed to fetch employee list.");
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
       const { message } = error.response?.data || "";
-      toast.error(message)
+      toast.error(message);
     }
-  }
+  };
 
   const handleAssignSubmit = async (modalData) => {
     try {
       let response;
       if (editData) {
-        console.log(editData)
         response = await editAssignedWork(editData._id, modalData);
         if (response.status === 200) {
           toast.success("Task updated successfully");
@@ -70,23 +88,21 @@ const useAdminDashboard = () => {
           toast.error("Failed to assign task");
         }
       }
-
     } catch (error) {
       const { message } = error.response.data;
       toast.error(message);
     }
     setEditData(null);
-
   };
 
   const handleEditTask = async (task) => {
     setEditData(task);
     setIsModalOpen(true);
-  }
+  };
 
   const handleDeleteTask = async (id) => {
     try {
-      console.log(id)
+      console.log(id);
       const response = await deleteAssignedWork(id);
       if (response.status === 200) {
         toast.success("Task deleted successfully");
@@ -95,47 +111,47 @@ const useAdminDashboard = () => {
         toast.error("Failed to delete task");
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
       const { message } = error.response.data;
       toast.error(message);
     }
-  }
+  };
 
   const fetchAllusers = async () => {
     try {
-      const response =await getAllUsers();
+      const response = await getAllUsers();
       if (response.status === 200) {
         setUsers(response.data.data || []);
       } else {
         toast.error("Failed to fetch employee list.");
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
       const { message } = error.response?.data || "";
-      toast.error(message)
+      toast.error(message);
     }
-
-  }
+  };
 
   useEffect(() => {
     fetchWorkList();
     fetchEmployeeList();
     fetchAllusers();
-  }, [])
+  }, []);
 
   return {
-    workList,
+    workList: priorityWiseSort,
     users,
     empList,
     editData,
     isModalOpen,
     openModal,
     closeModal,
+    setWorkList,
+    setEditData,
     handleAssignSubmit,
     handleEditTask,
     handleDeleteTask,
-    
-
+    fetchWorkList,
   };
 };
 

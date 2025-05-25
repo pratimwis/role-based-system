@@ -7,12 +7,26 @@ const useEmployeeDashboard = () => {
   const [workList, setWorkList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // priority & priorityOrder wise sort
+  const priorityArray = { high: 1, medium: 2, low: 3 };
+  const priorityWiseSort = workList.sort((a, b) => {
+  const priorityDiff = priorityArray[a.priority] - priorityArray[b.priority];
+
+    //this short high to low
+    if (priorityDiff !== 0) {
+      return priorityDiff;
+    }
+
+    // If priority level is same, sort by priorityOrder
+    return a.priorityOrder - b.priorityOrder;
+  });
+
   // Fetch employee data and assigned work
   const fetchEmpData = async () => {
     try {
       const [empResponse, workResponse] = await Promise.all([
         employeeData(),
-        assignedWork()
+        assignedWork(),
       ]);
       setEmpData(empResponse.data.data);
       setWorkList(workResponse.data.workList);
@@ -35,7 +49,7 @@ const useEmployeeDashboard = () => {
     refreshWorkList();
   }, []);
 
-//Socket connection(new task) and update work list
+  //Socket connection(new task) and update work list
   // useEffect(() => {
   //   const empId = empData._id;
   //   if (empData) {
@@ -63,13 +77,12 @@ const useEmployeeDashboard = () => {
   //   };
   // }, [empData]);
 
-
   return {
     empData,
-    workList,
+    workList:priorityWiseSort,
     isModalOpen,
     setIsModalOpen,
-    refreshWorkList
-  }
-}
+    refreshWorkList,
+  };
+};
 export default useEmployeeDashboard;
