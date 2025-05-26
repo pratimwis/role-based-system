@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import User from '../models/user.model.js';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import e from 'express';
 dotenv.config();
 const {JWT_SECRET, JWT_EXPIRES_IN} = process.env;
 
@@ -63,6 +64,29 @@ export const loginUser = async (req, res) => {
     console.log(error)
   }
 
+}
+
+export const updateProfile = async (req, res) => {
+  const userId = req.user.id;
+  const file = req.file;
+  if (!file) return res.status(400).json({ error: 'No file uploaded' });
+
+  const imageUrl = `${process.env.BASE_URL}/uploads/${req.user.username}/${file.originalname}`;
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { profilePicture: imageUrl },
+      { new: true }
+    );
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+  
+  res.status(200).json({ imageUrl });
 }
 
 

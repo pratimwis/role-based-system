@@ -27,6 +27,9 @@ const WorkList = ({ list, handleEdit, handleDelete, emplist, fetchWorkList }) =>
       return;
     }
     const response = await updatePriorityOrder(draggedWork._id, targetItem._id);
+    if (response.status !== 200) {
+      return;
+    }
     fetchWorkList();
 
   };
@@ -99,19 +102,23 @@ const WorkList = ({ list, handleEdit, handleDelete, emplist, fetchWorkList }) =>
                   Title: {item.title}
                 </h3>
                 <p className="text-gray-700 mb-1">
-                  <span className="font-medium">Description:</span>{" "}
+                  <span className="font-medium">Description:</span>
                   {item.description}
                 </p>
                 <p className="text-gray-700 mb-4">
-                  <span className="font-medium">Assigned To:</span>{" "}
+                  <span className="font-medium">Assigned To:</span>
                   {item.assignedTo}
                 </p>
                 <p className="text-gray-700 mb-4">
                   <span className="font-medium">Priority:</span> {item.priority}
                 </p>
                 <p className="text-gray-700 mb-4">
-                  <span className="font-medium">priorityOrder:</span>{" "}
+                  <span className="font-medium">priorityOrder:</span>
                   {item.priorityOrder}
+                </p>
+                <p className="text-red-700 mb-4">
+                  <span className="font-medium">Status: </span>
+                  {item.status.toUpperCase()}
                 </p>
                 <div className="flex gap-4">
                   <button

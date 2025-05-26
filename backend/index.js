@@ -20,6 +20,7 @@ const PORT = 8000;
 
 app.use(express.json());
 app.use(cors());
+app.use('/uploads', express.static('uploads'));
 
 // Routes
 app.use('/api/v1/admin', adminRouter);
@@ -42,6 +43,6 @@ io.on('connection', (socket) => {
 
 server.listen(PORT, () => {
   connectDB();
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on ${process.env.BASE_URL}`); // Use BASE_URL from .env
 
 });

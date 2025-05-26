@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { persistor, store } from '../redux/store';
+import { logout } from '../redux/authSlice/slice';
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
 const API = axios.create({
   baseURL: apiUrl,
@@ -8,10 +10,11 @@ const API = axios.create({
 API.interceptors.request.use(
   (req) => {
     try {
-      if (!req.url.includes('/auth/')) {
-        const token = localStorage.getItem('token');
+      if (!req.url.includes('/auth/login') && !req.url.includes('/auth/register')) {
+        const state = store.getState();
+        const token = state.auth.token;
         if (token) {
-          req.headers.Authorization = JSON.parse(token);
+          req.headers.Authorization = token;
         } else {
           console.warn("Token not found");
           window.location.href = "/login";
@@ -27,16 +30,16 @@ API.interceptors.request.use(
 
 API.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (error.response) {
       const message = error.response.data?.message || "An error occurred";
       if (message === "Access denied") {
         toast.error("Access Denied");
-        localStorage.removeItem("token");
-        localStorage.removeItem("userData");
+        store.dispatch(logout());
+        await persistor.purge();
         window.location.href = "/login";
       }
-     // else {
+      // else {
       //   toast.error(message);
       // }
     } else if (error.request) {
@@ -45,7 +48,7 @@ API.interceptors.response.use(
       toast.error("An unexpected error occurred");
     }
 
-    return Promise.reject(error); 
+    return Promise.reject(error);
   }
 );
 
@@ -58,6 +61,13 @@ export const loginUser = (formData) => {
 export const registerUser = (formData) => {
   return API.post('/auth/register', formData);
 }
+export const updateProfile = (formData) => {
+  return API.post('/auth/uploads', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+} 
 
 //Admin Api's
 export const employeeList = () => {
@@ -78,8 +88,8 @@ export const deleteAssignedWork = (id) => {
 export const getAllUsers = () => {
   return API.get('/admin/get-all-users');
 }
-export const updatePriorityOrder = (draggedWorkId,targetWorkId)=>{
-  return API.put('/admin/update-priority-order',{draggedWorkId,targetWorkId})
+export const updatePriorityOrder = (draggedWorkId, targetWorkId) => {
+  return API.put('/admin/update-priority-order', { draggedWorkId, targetWorkId })
 }
 
 //Employee Api's
@@ -90,5 +100,5 @@ export const assignedWork = () => {
   return API.get('/employee/assigned-work')
 }
 export const updateWorkStatus = (id, message) => {
-  return API.post(`/employee/submit-work/${id}`, {message});
+  return API.post(`/employee/submit-work/${id}`, { message });
 }

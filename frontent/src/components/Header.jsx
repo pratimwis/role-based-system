@@ -1,16 +1,21 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { socket } from '../socket';
+import {  useDispatch, useSelector } from 'react-redux';
+import { persistor } from '../redux/store';
+import { logout } from '../redux/authSlice/slice';
+import profileImage from '../assets/userImage/profileImage.jpeg';
+
 
 const Header = () => {
-  const userLocalData = localStorage.getItem('userData');
-  const userData = JSON.parse(userLocalData);
+
+  const userData = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogout = () => {
-    localStorage.clear();
+    dispatch(logout());
+    persistor.purge()
     navigate('/login');
-    socket.emit("logout", userData.username);
     toast.success("Logged out successfully");
   };
 
@@ -48,8 +53,19 @@ const Header = () => {
             >
               Logout
             </button>
+            
           )}
+
+          <Link to={'/profile'} className="h-10 w-10 bg-white rounded-full">
+            <img
+              src={userData?.profilePicture || profileImage}
+              alt="Profile"
+              className="h-full w-full rounded-full object-cover"
+            />
+
+          </Link>
         </nav>
+        
       </div>
     </header>
   );

@@ -14,6 +14,7 @@ export const verifyToken = (req, res, next) => {
       id:decoded._id,
       role:decoded.role,
       username:decoded.username,
+      profilePicture: decoded.profilePicture
     };
     next();
   });

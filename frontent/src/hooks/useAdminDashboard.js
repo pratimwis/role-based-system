@@ -8,11 +8,9 @@ import {
   workListApi,
 } from "../api/AllApi";
 import { toast } from "react-toastify";
-//import { socket } from '../socket';
-//import useAuthGuard from '../utils/UseAuthGuard';
+
 
 const useAdminDashboard = () => {
-  //const userData = useAuthGuard();
   const [users, setUsers] = useState([]);
   const [empList, setEmpList] = useState([]);
   const [workList, setWorkList] = useState([]);

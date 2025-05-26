@@ -3,10 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { loginUser } from '../api/AllApi';
-import { socket } from '../socket.js';
+import { useDispatch } from 'react-redux';
+import { setAuth } from '../redux/authSlice/slice';
+//import { socket } from '../socket.js';
 
 export const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -24,10 +28,13 @@ export const Login = () => {
     e.preventDefault();
     try {
       const response = await loginUser(formData);
-      const { message, token, userData } = response?.data;
-      localStorage.setItem("token", JSON.stringify(token));
-      localStorage.setItem("userData", JSON.stringify(userData))
-      socket.emit("login", userData.username);
+      if (response?.status !== 200) {
+        return toast.error("Login failed, please try again.");
+      }
+      const { message, token, userData } = response?.data || {};
+      dispatch(setAuth({token,userData}));
+
+      //socket.emit("login", userData.username);
       if (userData.role === "admin") {
         navigate('/admin-dashboard')
       } else {
@@ -36,7 +43,7 @@ export const Login = () => {
       toast.success(message);
     } catch (error) {
       console.log(error)
-      const { message } = error?.response?.data ||"";
+      const { message } = error?.response?.data || "";
       toast.error(message);
     }
   };
