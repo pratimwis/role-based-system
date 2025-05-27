@@ -2,12 +2,12 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './App.css'
 import Header from './components/Header'
 import Layout from './components/Layout'
-import Home from '../views/Home'
+import Home from './views/Home.jsx'
 import { Login } from './auth/Login'
 import Register from './auth/Register'
-import AdminDashboard from '../views/adminDashboard/index.jsx'
-import EmployeeDashboard from '../views/employeeDashboard/index.jsx'
-import UserProfile from '../views/profile/index.jsx'
+import AdminDashboard from './views/adminDashboard/index.jsx'
+import EmployeeDashboard from './views/employeeDashboard/index.jsx'
+import UserProfile from './views/profile/index.jsx'
 
 function App() {
   return (

@@ -1,8 +1,8 @@
 import { FiUserCheck } from 'react-icons/fi';
 import { MdOutlineWork } from 'react-icons/md';
 import { useState } from 'react';
-import useEmployeeDashboard from '../../src/hooks/useEmployeeDashboard';
-import StatusUpdateModal from '../../src/components/UpdateStatusModal';
+import useEmployeeDashboard from '../../hooks/useEmployeeDashboard';
+import StatusUpdateModal from '../../components/UpdateStatusModal';
 
 const EmployeeDashboard = () => {
   const { empData, workList, refreshWorkList } = useEmployeeDashboard();

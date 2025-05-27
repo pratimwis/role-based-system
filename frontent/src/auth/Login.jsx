@@ -31,11 +31,11 @@ export const Login = () => {
       if (response?.status !== 200) {
         return toast.error("Login failed, please try again.");
       }
-      const { message, token, userData } = response?.data || {};
-      dispatch(setAuth({token,userData}));
+      const { message, token, user } = response?.data || {};
+      dispatch(setAuth({token,user}));
 
       //socket.emit("login", userData.username);
-      if (userData.role === "admin") {
+      if (user.role === "admin") {
         navigate('/admin-dashboard')
       } else {
         navigate('/employee-dashboard')

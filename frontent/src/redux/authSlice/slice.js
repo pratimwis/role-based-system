@@ -5,16 +5,17 @@ export const authSlice = createSlice({
   initialState: {
     token:null,
     user: {
-
+      username:"",
+      profilePicture:"",
+      role:""
     },
     isAuthenticated: false,
   },
   reducers: {
     setAuth: (state,action) => {
       state.token = action.payload.token
-      state.user = action.payload.userData
+      state.user = action.payload.user
       state.isAuthenticated = true
-     
     },
     updateProfileImage: (state, action) => {
       if (state.user) {

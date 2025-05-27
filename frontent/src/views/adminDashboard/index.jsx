@@ -1,8 +1,8 @@
 import { FiPlus } from "react-icons/fi";
 import { useState } from "react";
-import useAdminDashboard from "../../src/hooks/useAdminDashboard";
-import AssignWorkModal from "../../src/components/AssignWorkModal";
-import WorkList from "../../src/components/WorkList";
+import useAdminDashboard from "../../hooks/useAdminDashboard";
+import AssignWorkModal from "../../components/AssignWorkModal";
+import WorkList from "../../components/WorkList";
 import { useSelector } from "react-redux";
 const AdminDashboard = () => {
   const { user } = useSelector((state) => state.auth);

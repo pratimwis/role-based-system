@@ -1,23 +1,33 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import moment from 'moment';
-import profileImageDefault from '../../src/assets/userImage/profileImage.jpeg';
+import profileImageDefault from '../../assets/userImage/profileImage.jpeg';
 import { FaRegEdit } from "react-icons/fa";
-import { updateProfile } from '../../src/api/AllApi';
-import { updateProfileImage } from '../../src/redux/authSlice/slice';
 import { toast } from 'react-toastify';
+import { updateProfile } from '../../api/AllApi';
+import { updateProfileImage } from '../../redux/authSlice/slice';
 
 
 const UserProfile = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const [showPasswordField, setShowPasswordField] = useState(false);
-  const [newPassword, setNewPassword] = useState('');
+  const [newPassword, setNewPassword] = useState({
+    current: '',
+    new: '',
+    confirm: ''
+  });
   const [profileImage, setProfileImage] = useState(user.profilePicture || profileImageDefault);
 
 
   const handlePasswordChange = () => {
-    console.log('New Password:', newPassword);
+    if (!newPassword.current || !newPassword.new || !newPassword.confirm) {
+      toast.error('Please fill in all password fields');
+      return;
+    }
+    if (newPassword.new !== newPassword.confirm) {
+      toast.error('New password and confirm password do not match');
+      return;
+    }
     setShowPasswordField(false);
     setNewPassword('');
   };
@@ -82,16 +92,6 @@ const UserProfile = () => {
           <label className="block text-sm font-semibold text-gray-600 mb-1">Role</label>
           <div className="px-4 py-2 bg-gray-100 rounded-md capitalize">{user.role}</div>
         </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-gray-600 mb-1">Created At</label>
-          <div className="px-4 py-2 bg-gray-100 rounded-md">{moment(user.createdAt).format('MMMM Do YYYY, h:mm A')}</div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-gray-600 mb-1">Updated At</label>
-          <div className="px-4 py-2 bg-gray-100 rounded-md">{moment(user.updatedAt).format('MMMM Do YYYY, h:mm A')}</div>
-        </div>
       </div>
 
       {/* Change Password Section */}
@@ -108,11 +108,25 @@ const UserProfile = () => {
         ) : (
           <div className="space-y-4">
             <input
+              type="text"
+              placeholder="Enter current password"
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={newPassword.current || ''}
+              onChange={(e) => setNewPassword({ ...newPassword, current: e.target.value })}
+            />
+            <input
               type="password"
               placeholder="Enter new password"
               className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
+              value={newPassword.new || ''}
+              onChange={(e) => setNewPassword({ ...newPassword, new: e.target.value })}
+            />
+            <input
+              type="password"
+              placeholder="Confirm password"
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={newPassword.confirm || ''}
+              onChange={(e) => setNewPassword({ ...newPassword, confirm: e.target.value })}
             />
             <div className="flex gap-4 justify-end">
               <button
